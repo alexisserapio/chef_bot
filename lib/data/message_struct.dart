@@ -10,4 +10,8 @@ class ChatMessage {
     required this.sender,
     this.isLoading = false,
   });
+
+  String get chatText {
+    return text;
+  }
 }

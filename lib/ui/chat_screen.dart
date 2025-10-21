@@ -5,6 +5,8 @@ import 'package:chef_bot/data/message_struct.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -33,22 +35,12 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // 🔑 Aquí inicializas el modelo, quizás cargando la clave de un .env
-    // (Asegúrate que 'apiKey' sea una variable disponible aquí)
-    model = GenerativeModel(
-      model: 'gemini-2.5-flash',
-      // Ejemplo: usando una variable de entorno para la seguridad
-      //apiKey: const String.fromEnvironment('GEMINI_API_KEY')
-      apiKey: apiKey,
-    );
 
-    _messages.add(
-      ChatMessage(
-        text:
-            '👋 ¡Hola! Soy ChefBot 🍳. ¿Qué te apetece cocinar hoy? Puedo ayudarte con recetas rápidas y deliciosas',
-        sender: MessageSender.bot,
-      ),
-    );
+    model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _cargarMensajes();
+    });
   }
 
   @override
@@ -79,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return content;
   }
 
-  // Método para manejar el envío de mensajes (simulado por ahora)
+  // Método para manejar el envío de mensajes
   void sendMessage() {
     final inputText = _textController.text;
 
@@ -93,10 +85,79 @@ class _ChatScreenState extends State<ChatScreen> {
       // Limpiar el campo de texto y reconstruir el widget (si fuera necesario)
       _textController.clear();
       // Si quieres que el UI se actualice después de enviar:
+      _guardarMensajes();
       // setState(() { /* actualizar variables de estado aquí */ })
       // Empieza la carga
       obtenerRespuesta(inputText);
     }
+  }
+
+  Future<void> _guardarMensajes() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Convertir lista de mensajes a JSON
+    final mensajesJson = _messages.map((msg) {
+      return {
+        'text': msg.text,
+        'sender': msg.sender == MessageSender.user ? 'user' : 'bot',
+      };
+    }).toList();
+
+    await prefs.setString('chat_history', jsonEncode(mensajesJson));
+    debugPrint('💾 Chat guardado correctamente');
+  }
+
+  Future<void> _cargarMensajes() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('chat_history');
+
+    if (data != null) {
+      final List<dynamic> mensajesJson = jsonDecode(data);
+
+      setState(() {
+        _messages.clear();
+        _messages.addAll(
+          mensajesJson.map(
+            (item) => ChatMessage(
+              text: item['text'],
+              sender: item['sender'] == 'user'
+                  ? MessageSender.user
+                  : MessageSender.bot,
+            ),
+          ),
+        );
+      });
+
+      debugPrint('💬 Chat restaurado desde almacenamiento local');
+    } else {
+      // Si no hay historial previo, agregamos el mensaje de bienvenida
+      setState(() {
+        _messages.add(
+          ChatMessage(
+            text:
+                '👋 ¡Hola! Soy ChefBot 🍳. ¿Qué te apetece cocinar hoy? Puedo ayudarte con recetas rápidas y deliciosas',
+            sender: MessageSender.bot,
+          ),
+        );
+      });
+    }
+  }
+
+  Future<void> _borrarHistorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('chat_history');
+    setState(() => _messages.clear());
+    debugPrint('🗑️ Historial eliminado');
+
+    setState(() {
+      _messages.add(
+        ChatMessage(
+          text:
+              '👋 ¡Hola! Soy ChefBot 🍳. ¿Qué te apetece cocinar hoy? Puedo ayudarte con recetas rápidas y deliciosas',
+          sender: MessageSender.bot,
+        ),
+      );
+    });
   }
 
   Future<void> obtenerRespuesta(String prompt) async {
@@ -114,6 +175,8 @@ class _ChatScreenState extends State<ChatScreen> {
         );
         _isGenerating = false;
       });
+
+      _guardarMensajes();
     } catch (e) {
       debugPrint('Ocurrió un error: $e');
       setState(() {
@@ -148,7 +211,10 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
+          IconButton(
+            onPressed: _borrarHistorial,
+            icon: const Icon(Icons.delete_forever, color: Colors.redAccent),
+          ),
         ],
       ),
       body: SafeArea(
