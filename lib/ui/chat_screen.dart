@@ -4,8 +4,11 @@ import 'package:chef_bot/core/widget_message.dart';
 import 'package:chef_bot/data/message_struct.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
+
+final String apiKey = dotenv.get('apiKey', fallback: '');
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -61,7 +64,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // Primero el rol de sistema
     content.add(
       Content.text(
-        'Sistema: Eres ChefBot, da solo recetas un poco cortas o contesta sobre ingredientes.',
+        'Sistema: Eres ChefBot, da respuestas de longitud mediana o cortas sobre recetas y cocina',
       ),
     );
 

@@ -2,9 +2,12 @@ import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/ui/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  runApp(const MainScreen());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "tokens.env");
+  runApp(MainScreen());
 }
 
 class MainScreen extends StatelessWidget {
