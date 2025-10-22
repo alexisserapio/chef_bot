@@ -15,4 +15,11 @@ class AppStrings {
   static const httpError =
       'Ocurrió un error al recuperar la receta, intenta nuevamente';
   static const searchFieldHint = 'Buscar Recetas';
+  static const instructionsTitle = '¿Cómo realizar las peticiones?';
+  static const firstInstructions =
+      '1. Escribe una receta a buscar en TheMealDB API';
+  static const firstSubText = '(Consulta de Informacion Externa)';
+  static const secondInstructions =
+      '2. Posteriormente agrega tu receta a favoritos';
+  static const secondSubText = '(Envio simulado de datos)';
 }

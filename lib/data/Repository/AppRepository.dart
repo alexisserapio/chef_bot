@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:chef_bot/core/app_constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:chef_bot/data/recipe_listDTO.dart'; // Ajusta la ruta a tu DTO (modelo)
+import 'package:chef_bot/data/model/recipe_listDTO.dart'; // Ajusta la ruta a tu DTO (modelo)
 
 class AppRepository {
   // Método público que la UI u otras capas de negocio usarán

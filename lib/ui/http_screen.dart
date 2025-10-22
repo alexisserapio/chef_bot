@@ -1,7 +1,9 @@
 import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/data/Repository/appRepository.dart';
-import 'package:chef_bot/data/recipe_listDTO.dart';
+import 'package:chef_bot/data/model/recipeDTO.dart';
+import 'package:chef_bot/data/model/recipe_listDTO.dart';
+import 'package:chef_bot/ui/recipe_screen.dart';
 import 'package:flutter/material.dart';
 
 class HttpScreen extends StatefulWidget {
@@ -61,6 +63,7 @@ class _HttpScreenState extends State<HttpScreen> {
         ),
       ),
 
+      //Body
       body: Column(
         children: [
           Padding(
@@ -98,18 +101,20 @@ class _HttpScreenState extends State<HttpScreen> {
             future: _recipes,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: CircularProgressIndicator(color: AppColors.sendColor),
+                );
               } else if (snapshot.hasError) {
                 return Text("Error: ${snapshot.error}");
               } else if (snapshot.hasData) {
                 var recipeList = snapshot.data?.result;
-                return SizedBox(
-                  height: 200,
+                return Expanded(
                   child: ListView.builder(
                     itemCount: recipeList?.length ?? 0,
                     itemBuilder: (context, index) {
                       if (recipeList != null) {
-                        return Text(recipeList[index].name!);
+                        return itemRecipe(recipeList[index]);
                       } else {
                         return Text('Error!');
                       }
@@ -117,7 +122,51 @@ class _HttpScreenState extends State<HttpScreen> {
                   ),
                 );
               } else {
-                return Text("No data");
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        AppStrings.instructionsTitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        AppStrings.firstInstructions,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Text(
+                        AppStrings.firstSubText,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        AppStrings.secondInstructions,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3.0),
+                      child: Text(
+                        AppStrings.secondSubText,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                );
               }
             },
           ),
@@ -125,4 +174,49 @@ class _HttpScreenState extends State<HttpScreen> {
       ),
     );
   }
+
+  Padding itemRecipe(Recipe recipe) => Padding(
+    padding: const EdgeInsets.only(
+      top: 10.0,
+      bottom: 8.0,
+      left: 15.0,
+      right: 15.0,
+    ),
+    child: GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => RecipeScreen(recipe: recipe)),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: AppColors.sendColor,
+        ),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                recipe.thumbnailUrl!,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                recipe.name!,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
