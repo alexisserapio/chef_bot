@@ -1,7 +1,7 @@
 import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/core/widget_message.dart';
-import 'package:chef_bot/data/message_struct.dart';
+import 'package:chef_bot/data/models/messages/message_struct.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

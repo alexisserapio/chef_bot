@@ -1,8 +1,8 @@
 import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/core/app_strings.dart';
-import 'package:chef_bot/data/Repository/appRepository.dart';
-import 'package:chef_bot/data/model/recipeDTO.dart';
-import 'package:chef_bot/data/model/recipe_listDTO.dart';
+import 'package:chef_bot/data/repository/appRepository.dart';
+import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
+import 'package:chef_bot/data/models/recipes/recipe_listDTO.dart';
 import 'package:chef_bot/ui/recipe_screen.dart';
 import 'package:flutter/material.dart';
 

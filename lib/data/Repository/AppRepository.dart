@@ -1,37 +1,87 @@
+import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:chef_bot/core/app_constants.dart';
-import 'package:http/http.dart' as http;
-import 'package:chef_bot/data/model/recipe_listDTO.dart'; // Ajusta la ruta a tu DTO (modelo)
+import 'package:chef_bot/data/models/recipes/recipe_listDTO.dart';
 
 class AppRepository {
-  // Método público que la UI u otras capas de negocio usarán
+  final Dio _dio;
+
+  AppRepository({Dio? dio})
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              baseUrl: AppConstants.BASE_URL,
+              connectTimeout: const Duration(seconds: 10),
+              receiveTimeout: const Duration(seconds: 10),
+              headers: {'Content-Type': 'application/json'},
+            ),
+          ) {
+    // Agregamos un interceptor para ver los logs del request/response
+    _dio.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true),
+    );
+  }
+
+  /// Obtiene recetas desde TheMealDB API
   Future<RecipeList?> fetchRecipes(String name) async {
-    final url = Uri.parse(AppConstants.BASE_URL + name);
     try {
-      final response = await http.get(url);
+      final response = await _dio.get(name);
 
       if (response.statusCode == 200) {
-        debugPrint('Respuesta recibida 200 OK');
-        // Decodificación del JSON
-        final data = json.decode(response.body);
-
-        // La API de TheMealDB devuelve la respuesta envuelta en un array 'meals'
-        RecipeList recipes = RecipeList.fromJson(data);
+        debugPrint('✅ Respuesta 200 OK');
+        final data = response.data;
+        final recipes = RecipeList.fromJson(data);
         return recipes;
       } else {
-        // Manejo de errores HTTP (404, 500, etc.)
-        // Puedes lanzar una excepción personalizada aquí si lo deseas
         throw Exception(
-          'Fallo al cargar las recetas. Código: ${response.statusCode}',
+          '❌ Fallo al cargar las recetas. Código: ${response.statusCode}',
         );
       }
-    } catch (e) {
-      // Manejo de errores de conexión o de parsing
-      // Es crucial capturar y manejar el error
-      debugPrint('Error al cargar las recetas: $e');
-      // Puedes lanzar una excepción para que la UI sepa que algo falló
+    } on DioException catch (e) {
+      _handleDioError(e);
       throw Exception('Error de red al conectar con la API.');
+    } catch (e) {
+      debugPrint('⚠️ Error inesperado: $e');
+      throw Exception('Error desconocido al cargar las recetas.');
+    }
+  }
+
+  /// Envía datos JSON a un endpoint de prueba (como Pipedream)
+  Future<void> sendData(Recipe recipe) async {
+    try {
+      final response = await _dio.post(
+        AppConstants.BASE_MY_URL,
+        data: recipe.toJson(),
+      );
+
+      debugPrint('✅ Datos enviados con éxito: ${response.statusCode}');
+      debugPrint('📤 Respuesta: ${response.data}');
+    } catch (e) {
+      debugPrint('❌ Error al enviar los datos: $e');
+      throw Exception('No se pudieron enviar los datos');
+    }
+  }
+
+  /// Manejo centralizado de errores de Dio
+  void _handleDioError(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+        debugPrint('⏱ Tiempo de conexión agotado');
+        break;
+      case DioExceptionType.receiveTimeout:
+        debugPrint('📭 Tiempo de respuesta agotado');
+        break;
+      case DioExceptionType.badResponse:
+        debugPrint('❌ Error del servidor: ${e.response?.statusCode}');
+        debugPrint('🧾 Cuerpo: ${e.response?.data}');
+        break;
+      case DioExceptionType.connectionError:
+        debugPrint('🚫 Error de conexión (sin red)');
+        break;
+      default:
+        debugPrint('⚠️ Error general de Dio: ${e.message}');
     }
   }
 }

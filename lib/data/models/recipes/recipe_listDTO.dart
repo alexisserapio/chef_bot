@@ -1,4 +1,4 @@
-import 'package:chef_bot/data/model/recipeDTO.dart';
+import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 
 class RecipeList {
   final List<Recipe>? result;

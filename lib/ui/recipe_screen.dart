@@ -1,11 +1,19 @@
 import 'package:chef_bot/core/app_colors.dart';
-import 'package:chef_bot/data/model/recipeDTO.dart';
+import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:chef_bot/data/repository/appRepository.dart';
 
-class RecipeScreen extends StatelessWidget {
+class RecipeScreen extends StatefulWidget {
   final Recipe recipe;
   const RecipeScreen({super.key, required this.recipe});
+
+  @override
+  State<RecipeScreen> createState() => _RecipeScreenState();
+}
+
+class _RecipeScreenState extends State<RecipeScreen> {
+  final AppRepository _repository = AppRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +30,7 @@ class RecipeScreen extends StatelessWidget {
         shadowColor: Colors.grey.withOpacity(0.3),
         titleSpacing: 0,
         title: Text(
-          recipe.name!,
+          widget.recipe.name!,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -32,15 +40,21 @@ class RecipeScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Aquí va la lógica para guardar la receta en favoritos.
-          debugPrint('Receta ${recipe.name} añadida/quitada de favoritos!');
+        onPressed: () async {
+          try {
+            await _repository.sendData(widget.recipe);
+            debugPrint('Receta enviada a Pipedream');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Receta enviada con éxito 🚀')),
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error al enviar la receta ❌')),
+            );
+          }
         },
-        backgroundColor: Colors.amber, // Color amarillo
-        child: const Icon(
-          Icons.star, // Icono de estrella
-          color: Colors.white, // Color del icono
-        ),
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.star, color: Colors.white),
       ),
 
       body: ListView(
@@ -49,9 +63,9 @@ class RecipeScreen extends StatelessWidget {
             .zero, // Importante: Elimina el padding por defecto del ListView.
         children: [
           // 🖼️ IMAGEN DE ANCHO COMPLETO
-          recipe.thumbnailUrl != null
+          widget.recipe.thumbnailUrl != null
               ? Image.network(
-                  recipe.thumbnailUrl!,
+                  widget.recipe.thumbnailUrl!,
                   // El ancho se expande automáticamente dentro del ListView,
                   // pero lo aseguramos con width: double.infinity
                   width: double.infinity,
@@ -104,7 +118,7 @@ class RecipeScreen extends StatelessWidget {
               children: [
                 // 🟣 Nombre de la receta
                 Text(
-                  recipe.name ?? 'Nombre no disponible',
+                  widget.recipe.name ?? 'Nombre no disponible',
                   style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -116,19 +130,21 @@ class RecipeScreen extends StatelessWidget {
 
                 // 🔵 Pais
                 Text(
-                  recipe.area != null ? recipe.area! : 'Area no disponible',
+                  widget.recipe.area != null
+                      ? widget.recipe.area!
+                      : 'Area no disponible',
                   style: const TextStyle(
                     fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w300,
+                    color: Colors.orange,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
 
                 const SizedBox(height: 8),
 
                 Text(
-                  recipe.instructions != null
-                      ? recipe.instructions!
+                  widget.recipe.instructions != null
+                      ? widget.recipe.instructions!
                       : 'Receta no disponible',
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                 ),

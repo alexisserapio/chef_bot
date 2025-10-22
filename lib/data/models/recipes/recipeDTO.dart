@@ -6,15 +6,21 @@ class Recipe {
 
   Recipe({this.name, this.area, this.instructions, this.thumbnailUrl});
 
-  // Constructor de fábrica para crear una instancia de Meal
-  // a partir de un Map (la respuesta JSON decodificada).
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
       name: json['strMeal'] as String?,
       area: json['strArea'] as String?,
       instructions: json['strInstructions'] as String?,
-      // Aquí mapeamos 'strMealThumb' a nuestra propiedad 'thumbnailUrl'
       thumbnailUrl: json['strMealThumb'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'area': area,
+      'instructions': instructions,
+      'thumbnailUrl': thumbnailUrl,
+    };
   }
 }
