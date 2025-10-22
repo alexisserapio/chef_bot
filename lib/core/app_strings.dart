@@ -14,4 +14,5 @@ class AppStrings {
   static const httpSubtitle = 'Aquí tienes una receta aleatoria:';
   static const httpError =
       'Ocurrió un error al recuperar la receta, intenta nuevamente';
+  static const searchFieldHint = 'Buscar Recetas';
 }

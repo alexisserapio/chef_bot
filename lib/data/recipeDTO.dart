@@ -1,3 +1,5 @@
+import 'package:chef_bot/data/recipeDTO.dart';
+
 class Recipe {
   final String? name;
   final String? category;

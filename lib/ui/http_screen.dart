@@ -1,7 +1,7 @@
 import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/core/app_strings.dart';
-import 'package:chef_bot/data/Repository/AppRepository.dart';
-import 'package:chef_bot/data/recipeDTO.dart';
+import 'package:chef_bot/data/Repository/appRepository.dart';
+import 'package:chef_bot/data/recipe_listDTO.dart';
 import 'package:flutter/material.dart';
 
 class HttpScreen extends StatefulWidget {
@@ -13,29 +13,34 @@ class HttpScreen extends StatefulWidget {
 
 class _HttpScreenState extends State<HttpScreen> {
   final AppRepository _repository = AppRepository();
-  late Future<Recipe?> _recipe;
+  late Future<RecipeList?> _recipes;
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _recipe = _repository.getRandomMeal();
+    _recipes = Future.value(null);
+  }
 
-    _recipe.then((recipe) {
-      if (recipe != null) {
-        debugPrint('Nombre de la Receta: ${recipe.name}');
-        debugPrint('Categoría: ${recipe.category}');
-        debugPrint('URL de la Miniatura: ${recipe.thumbnailUrl}');
-        debugPrint('Area: ${recipe.area}');
-      } else {
-        debugPrint('La receta es nula.');
-      }
-    });
+  void searchRecipe() {
+    final inputText = _textController.text;
+    if (inputText.isNotEmpty) {
+      // Lógica para procesar el mensaje, actualizar el estado, etc.
+      debugPrint('Receta buscada: $inputText');
+
+      setState(() {
+        _recipes = _repository.fetchRecipes(inputText);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //Scaffold
       backgroundColor: AppColors.backgroundColor,
+
+      //AppBar
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
         leading: IconButton(
@@ -55,125 +60,68 @@ class _HttpScreenState extends State<HttpScreen> {
           ),
         ),
       ),
-      body: FutureBuilder<Recipe?>(
-        future: _recipe,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  AppStrings.httpError,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.red, fontSize: 18),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0, right: 10.0, left: 10.0),
+            child: TextField(
+              textAlign: TextAlign.center,
+              controller: _textController, // Asignamos el controlador
+              onSubmitted: (_) => searchRecipe(), // Enviamos al presionar Enter
+              decoration: InputDecoration(
+                hintText: AppStrings.searchFieldHint,
+                prefixIcon: Icon(Icons.search),
+                suffixIcon: const Opacity(
+                  opacity: 0.0, // Lo hacemos invisible
+                  child: Icon(
+                    Icons.search,
+                  ), // Usamos el mismo icono para asegurar el tamaño
                 ),
-              ),
-            );
-          }
-
-          final recipe = snapshot.data;
-          if (recipe == null) {
-            return const Center(child: Text(AppStrings.httpError));
-          }
-
-          // Usamos ListView para desplazar y para que la imagen pueda ocupar el ancho completo.
-          return ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets
-                .zero, // Importante: Elimina el padding por defecto del ListView.
-            children: [
-              // 🖼️ IMAGEN DE ANCHO COMPLETO
-              recipe.thumbnailUrl != null
-                  ? Image.network(
-                      recipe.thumbnailUrl!,
-                      // El ancho se expande automáticamente dentro del ListView,
-                      // pero lo aseguramos con width: double.infinity
-                      width: double.infinity,
-                      height: 300, // Mantenemos la altura
-                      fit: BoxFit.cover, // Asegura que cubra el área
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return SizedBox(
-                          height: 300, // Altura del placeholder
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.sendColor,
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
-                      // Agregamos un errorBuilder para manejar fallos de carga
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 300,
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: Icon(
-                              Icons.broken_image,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      height: 300,
-                      color: Colors.grey[200],
-                      child: const Center(child: Text('Imagen no disponible')),
-                    ),
-
-              // Agregamos un espaciador entre la imagen y el texto
-              const SizedBox(height: 25),
-
-              // 📝 CONTENIDO DE TEXTO (con Padding para los márgenes laterales)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  // Alineamos el texto a la izquierda para mejor lectura
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 🟣 Nombre de la receta
-                    Text(
-                      recipe.name ?? 'Nombre no disponible',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // 🔵 Categoría de la receta
-                    Text(
-                      recipe.category != null
-                          ? 'Categoría: ${recipe.category}'
-                          : 'Categoría no disponible',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black87,
-                      ),
-                    ),
-
-                    // Puedes agregar más widgets aquí y se desplazarán
-                    const SizedBox(
-                      height: 500,
-                    ), // Ejemplo para forzar el scroll
-                  ],
+                hintStyle: TextStyle(color: Colors.grey[600]),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.orange, width: 1),
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.orange, width: 2.5),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+
+          FutureBuilder(
+            future: _recipes,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else if (snapshot.hasData) {
+                var recipeList = snapshot.data?.result;
+                return SizedBox(
+                  height: 200,
+                  child: ListView.builder(
+                    itemCount: recipeList?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      if (recipeList != null) {
+                        return Text(recipeList[index].name!);
+                      } else {
+                        return Text('Error!');
+                      }
+                    },
+                  ),
+                );
+              } else {
+                return Text("No data");
+              }
+            },
+          ),
+        ],
       ),
     );
   }
