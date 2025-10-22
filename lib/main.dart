@@ -1,6 +1,7 @@
 import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/ui/chat_screen.dart';
+import 'package:chef_bot/ui/http_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -31,10 +32,11 @@ class RecipeBook extends StatelessWidget {
       backgroundColor: AppColors.backgroundColor,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 50),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              //Title
               const Text(
                 AppStrings.greeting,
                 style: TextStyle(
@@ -46,6 +48,7 @@ class RecipeBook extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const Text(
+                //Subtitle (welcome)
                 AppStrings.welcome,
                 style: TextStyle(
                   fontSize: 28,
@@ -55,54 +58,71 @@ class RecipeBook extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
+              //Select Text
               const Text(
                 AppStrings.selectOption,
                 style: TextStyle(fontSize: 18, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ChatScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.sendColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 15,
+              //Green Button
+              SizedBox(
+                width: double.infinity, // <--- ESTO FUERZA EL ANCHO MÁXIMO
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ChatScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.sendColor,
+                    padding: const EdgeInsets.symmetric(
+                      // El padding ya no necesita ser tan grande horizontalmente.
+                      vertical: 18,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  child: const Text(
+                    AppStrings.chatButton,
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
-                ),
-                child: const Text(
-                  AppStrings.chatButton,
-                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
               const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  // Acción del segundo botón
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 15,
+              //Orange Button
+              SizedBox(
+                width: double.infinity, // <--- ESTO FUERZA EL ANCHO MÁXIMO
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HttpScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding: const EdgeInsets.symmetric(
+                      // El padding ya no necesita ser tan grande horizontalmente.
+                      vertical: 18,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  child: const Text(
+                    AppStrings.httpButton,
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
-                ),
-                child: const Text(
-                  AppStrings.httpButton,
-                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
+              //Credits!
               const SizedBox(height: 30),
               const Text(
                 'Made with <3 by Alexis Serapio',

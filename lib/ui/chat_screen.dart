@@ -56,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // Primero el rol de sistema
     content.add(
       Content.text(
-        'Sistema: Eres ChefBot, da respuestas de longitud mediana o cortas sobre recetas y cocina',
+        'Sistema: Eres ChefBot, da respuestas de longitud mediana o cortas sobre recetas con sus ingredientes y pasos, ademas de cualquier cosa sobre cocina',
       ),
     );
 
