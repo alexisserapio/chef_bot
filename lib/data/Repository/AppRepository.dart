@@ -68,6 +68,10 @@ class AppRepository {
   Future<void> sendData(Recipe recipe) async {
     final dioTemp = Dio();
 
+    dioTemp.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true),
+    );
+
     try {
       final responseRbq = await dioTemp.post(
         requestBinUrl,
