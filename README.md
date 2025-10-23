@@ -49,4 +49,28 @@ build/app/outputs/flutter-apk/app-release.apk
 ```
 De igual manera, he creado un link al APK de la app con las variables correctamente declaradas y funcionando para pruebas dentro del siguiente link: [APK ChefBot](https://drive.google.com/file/d/1Z8wAzBMm-o-htt64gH_6Tw-4Te_Zk6Fb/view?usp=sharing)
 
+### Explicacion de las API utilizadas
 
+#### 🍽️ TheMealDB API
+
+TheMealDB es una API pública gratuita que proporciona información sobre recetas, ingredientes, categorías y regiones culinarias de todo el mundo. Ideal para proyectos de aprendizaje o apps de cocina.
+
+##### Características
+
+- Búsqueda de platillos por nombre, primera letra o ID.
+- Filtros por ingrediente, categoría o región (“área”).
+- Listado de categorías, áreas e ingredientes disponibles.
+- Generación de una receta aleatoria.
+- Respuestas en formato JSON con imágenes incluidas.
+
+#### 🧪 RequestBin con Pipedream
+
+RequestBin de Pipedream es una herramienta que te permite crear un endpoint HTTP público donde puedes recibir, inspeccionar y depurar peticiones entrantes de cualquier origen. 
+
+
+##### Caracteristicas
+
+- Generas una URL única que actúa como “bin” (contenedor) para capturar peticiones HTTP. 
+- Visualizas los detalles de cada petición: método HTTP, cabeceras, cuerpo, parámetros, etc. 
+- Puedes incluso usar flujos de trabajo (workflows) en Pipedream para procesar, transformar o reenviar las peticiones recibidas. 
+LittleCodingKata
