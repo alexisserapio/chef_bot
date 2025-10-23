@@ -91,4 +91,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get noReceipe => 'Receta no disponible';
+
+  @override
+  String get networkChatError => 'Hubo un error al conectarse con ChefBot, revisa tu conexión a Internet';
+
+  @override
+  String get generalChatError => 'Hubo un error al conectarse con ChefBot, prueba revisando tu apiKey y vuelve a intentarlo';
+
+  @override
+  String get networkAPIError => 'Error de red al conectar a la API, intentalo de nuevo por favor';
 }

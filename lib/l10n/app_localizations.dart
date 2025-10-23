@@ -239,29 +239,47 @@ abstract class AppLocalizations {
   /// **'Error sending recipe'**
   String get snackBarError;
 
-  /// When the recipe doesnt load
+  /// When the recipe image doesnt load
   ///
   /// In en, this message translates to:
   /// **'Image not available'**
   String get noImage;
 
-  /// No description provided for @noName.
+  /// When the recipe name doesnt load
   ///
   /// In en, this message translates to:
   /// **'Name not available'**
   String get noName;
 
-  /// No description provided for @noArea.
+  /// When the recipe area doesnt load
   ///
   /// In en, this message translates to:
   /// **'Country not available'**
   String get noArea;
 
-  /// No description provided for @noReceipe.
+  /// When the recipe doesnt load
   ///
   /// In en, this message translates to:
   /// **'Receipe not available'**
   String get noReceipe;
+
+  /// No internet in chat
+  ///
+  /// In en, this message translates to:
+  /// **'There was an error connecting to ChefBot, check your Internet connection'**
+  String get networkChatError;
+
+  /// general error in chat
+  ///
+  /// In en, this message translates to:
+  /// **'There was an error connecting to ChefBot, try checking your apiKey and try again'**
+  String get generalChatError;
+
+  /// Network error in api
+  ///
+  /// In en, this message translates to:
+  /// **'Network error connecting to API, try again'**
+  String get networkAPIError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

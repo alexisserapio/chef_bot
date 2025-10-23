@@ -65,11 +65,16 @@ class AppRepository {
 
   /// Envía datos JSON a un endpoint de prueba (como Pipedream)
   Future<void> sendData(Recipe recipe) async {
-    try {
-      final response = await _dio.post(requestBinUrl, data: recipe.toJson());
+    final dioTemp = Dio();
 
-      debugPrint('✅ Datos enviados con éxito: ${response.statusCode}');
-      debugPrint('📤 Respuesta: ${response.data}');
+    try {
+      final response_rqb = await dioTemp.post(
+        requestBinUrl,
+        data: recipe.toJson(),
+      );
+
+      debugPrint('✅ Datos enviados con éxito: ${response_rqb.statusCode}');
+      debugPrint('📤 Respuesta: ${response_rqb.data}');
     } catch (e) {
       debugPrint('❌ Error al enviar los datos: $e');
       throw Exception('No se pudieron enviar los datos');

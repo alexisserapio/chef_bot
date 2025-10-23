@@ -100,15 +100,27 @@
     "description": "Cuando la imagen de la receta no carga"
   },
   "noName": "Nombre no disponible",
-  "@noImage": {
+  "@noName": {
     "description": "Cuando el nombre de la receta no carga"
   },
   "noArea": "País no disponible",
-  "@noImage": {
+  "@noArea": {
     "description": "Cuando el pais de la receta no carga"
   },
   "noReceipe": "Receta no disponible",
-  "@noImage": {
+  "@noReceipe": {
     "description": "Cuando al receta no carga"
+  },
+  "networkChatError": "Hubo un error al conectarse con ChefBot, revisa tu conexión a Internet",
+  "@networkChatError": {
+    "description": "Cuando no hay internet"
+  },
+  "generalChatError": "Hubo un error al conectarse con ChefBot, prueba revisando tu apiKey y vuelve a intentarlo",
+  "@generalChatError": {
+    "description": "Cuando esta mal algo o la apikey"
+  },
+  "networkAPIError": "Error de red al conectar a la API, intentalo de nuevo por favor",
+  "@networkAPIError": {
+    "description": "Error de red en el API"
   }
 }

@@ -36,6 +36,13 @@ class _RecipeScreenState extends State<RecipeScreen> {
             style: TextStyle(fontSize: 20),
           ),
           backgroundColor: AppColors.sendColor,
+          duration: const Duration(seconds: 3),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+          ),
         ),
       );
 
@@ -48,6 +55,13 @@ class _RecipeScreenState extends State<RecipeScreen> {
             style: TextStyle(fontSize: 20),
           ),
           backgroundColor: AppColors.saveColor,
+          duration: const Duration(seconds: 3),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+          ),
         ),
       );
 

@@ -6,6 +6,7 @@ import 'package:chef_bot/data/repository/appRepository.dart';
 import 'package:chef_bot/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -81,7 +82,32 @@ class _ChatScreenState extends State<ChatScreen> {
     final content = _chatRepository.construirContenido(_messages);
 
     try {
+      // Comprobar conexión
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final hasConnection = connectivityResult != ConnectivityResult.none;
+
+      if (!hasConnection) {
+        //  Mostrar SnackBar si no hay internet
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.networkChatError),
+            backgroundColor: AppColors.red,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+        setState(() {
+          _isGenerating = false;
+        });
+        return; // Detener ejecución
+      }
+
+      // Si hay conexión, continuar con la petición
       final response = await _chatRepository.model.generateContent(content);
+
       setState(() {
         _messages.add(
           ChatMessage(text: response.text!, sender: MessageSender.bot),
@@ -95,6 +121,19 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         _isGenerating = false;
       });
+
+      // Mostrar error general
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.generalChatError),
+          backgroundColor: AppColors.red,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
     }
   }
 

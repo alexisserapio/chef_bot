@@ -123,7 +123,21 @@ class _HttpScreenState extends State<HttpScreen> {
                 debugPrint(
                   'Ha ocurrido un error en el snapshot: ${snapshot.error}',
                 );
-                return Text("Error: ${snapshot.error}");
+                return Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0),
+                      child: Text(
+                        'Error de Red al conectar con la API',
+                        style: TextStyle(
+                          color: AppColors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
 
                 //Si la respuesta es exitosa
               } else if (snapshot.hasData) {
