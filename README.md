@@ -20,17 +20,20 @@ Ejecuta en tu terminal:
 ```bash
 flutter pub get
 ```
-#### 3. Crear archivo de entorno (IMPORTANTE)
-Dado que esta aplicación se desarrolló utilizando la libreria **flutter_dotenv**, se omite dentro del repositorio el archivo **tokens.env**. Para poder ejecutar correctamente la aplicación, deberás crear este archivo.
-- Crea un archivo llamado **tokens.env** en la raíz del proyecto con las siguientes variables necesarias, sustituyendo donde se te pide:
+#### 3. Crear o modificar archivo de entorno (IMPORTANTE) ⚠️
+Dado que esta aplicación se desarrolló utilizando la libreria **flutter_dotenv**, se omite dentro del repositorio el archivo **tokens.env** con variables actuales. Para poder ejecutar correctamente la aplicación, deberás modifcar o crear este archivo.
+- Dentro del repositorio se incluye el archivo **tokens.env**, modifica el contenido de las variables establecidas con tu llave y URL.
+
+Si prefieres crear tu archivo:
+- Elimina el archivo .env existente y crea un nuevo archivo llamado **tokens.env** en la raíz del proyecto, copia y pega lo siguiente, sustituyendo donde se te pide:
 ```tokens.env
 apiKey = 'ESCRIBE_AQUI_TU_KEY_O_TOKEN_A_LA_AI'
 requestBinUrl = 'ESCRIBE_AQUI_TU_URL_PARA_RECIBIR'
 ```
-⚠️ Este archivo no se incluye en el repositorio por razones de seguridad.
+⚠️ Este archivo no se incluye funcionando en el repositorio por razones de seguridad.
 
 #### 4. Ejecutar la App
-Una vez creado el archivo anterior y sustituido correctamente el contenido de las variables, conecta un emulador o dispositivo físico y ejecuta en tu terminal:
+Una vez resuelto el archivo anterior, conecta un emulador o dispositivo físico y ejecuta en tu terminal:
 ```bash
 flutter run
 ```
@@ -43,7 +46,7 @@ Si lo deseas, teniendo ya el .env en tu proyecto, puedes generar el APK ejecutan
 ```bash
 flutter build apk --release
 ```
-El archivo se generara en:
+El archivo se generará en:
 ```Documents
 build/app/outputs/flutter-apk/app-release.apk
 ```
