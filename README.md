@@ -2,6 +2,9 @@
 
 Aplicación móvil desarrollada en Flutter cuyo objetivo principal es demostrar la capacidad de integración y uso de modelos de lenguaje grandes (LLM, por ejemplo, Gemini, GPT-4o, etc.) en un entorno móvil, además de destacar el manejo de peticiones HTTP a la web, ofreciendo una experiencia de chat en tiempo real para la generación, busqueda y carga de recetas.
 
+### Propósito del chat_bot
+- Un chatbot interactivo que ayuda a los usuarios a descubrir, buscar y explorar recetas de cocina, proporcionando ingredientes, instrucciones y sugerencias personalizadas de forma rápida y sencilla.
+
 ## Getting Started
 
 ### 🚀 Instrucciones para correr la app localmente
@@ -50,30 +53,72 @@ El archivo se generará en:
 ```Documents
 build/app/outputs/flutter-apk/app-release.apk
 ```
-De igual manera, he creado un link al APK de la app con las variables correctamente declaradas y funcionando para pruebas dentro del siguiente link: [APK ChefBot](https://drive.google.com/file/d/1Z8wAzBMm-o-htt64gH_6Tw-4Te_Zk6Fb/view?usp=sharing)
+## Enlace al APK
+De igual manera, se ha creado un link al APK de la app con las variables correctamente declaradas y funcionando para pruebas dentro del siguiente link: 
+- [APK ChefBot](https://drive.google.com/file/d/1Z8wAzBMm-o-htt64gH_6Tw-4Te_Zk6Fb/view?usp=sharing)
 
-### Explicacion de las API utilizadas
+## 🔗 Explicacion de las API utilizadas
 
-#### 🍽️ TheMealDB API
+### 🍽️ TheMealDB API
 
-TheMealDB es una API pública gratuita que proporciona información sobre recetas, ingredientes, categorías y regiones culinarias de todo el mundo. Ideal para proyectos de aprendizaje o apps de cocina.
+[TheMealDB API](https://www.themealdb.com/api.php) es una API pública gratuita que proporciona información sobre recetas, ingredientes, categorías y regiones culinarias de todo el mundo. Elegí esta API por estar relacionada al próposito de chef_bot.
 
-##### Características
+#### Características
+
+Tiene como caracteristicas:
 
 - Búsqueda de platillos por nombre, primera letra o ID.
 - Filtros por ingrediente, categoría o región (“área”).
 - Listado de categorías, áreas e ingredientes disponibles.
 - Generación de una receta aleatoria.
 - Respuestas en formato JSON con imágenes incluidas.
+  
+#### 📌 Ejemplos de endpoints
 
-#### 🧪 RequestBin con Pipedream
+- Buscar platillo llamado “Arrabiata".
+```TheMealDB API
+search.php?s=Arrabiata”.
+```
+- Listar platillos que empiezan con “a”
+```TheMealDB API
+search.php?f=a
+```
+- Buscar platillo con el id = 52772
+```TheMealDB API
+lookup.php?i=52772
+```
+- Obtener un platillo cualquiera al azar
+```TheMealDB API
+random.php
+```
+#### 🧩 Uso típico
 
-RequestBin de Pipedream es una herramienta que te permite crear un endpoint HTTP público donde puedes recibir, inspeccionar y depurar peticiones entrantes de cualquier origen. 
+- Realiza GET requests a los endpoints mencionados.
+- Procesa la respuesta JSON para presentar el nombre del platillo, ingredientes, categoría, área, instrucciones, imagen, etc.
 
+### 🧪 RequestBin con Pipedream
 
-##### Caracteristicas
+RequestBin de Pipedream es una herramienta que te permite crear un endpoint HTTP público donde puedes recibir, inspeccionar y depurar peticiones entrantes de cualquier origen, en la app lo utilicé para que recibiera un objeto JSON de recetas para aquellas que quieres que sean tus favoritas.
 
-- Generas una URL única que actúa como “bin” (contenedor) para capturar peticiones HTTP. 
-- Visualizas los detalles de cada petición: método HTTP, cabeceras, cuerpo, parámetros, etc. 
-- Puedes incluso usar flujos de trabajo (workflows) en Pipedream para procesar, transformar o reenviar las peticiones recibidas. 
-LittleCodingKata
+#### Caracteristicas
+
+Tiene como caracteristicas:
+
+- Generar una URL única que actúa como “bin” (contenedor) para capturar peticiones HTTP. 
+- Visualizar los detalles de cada petición: método HTTP, cabeceras, cuerpo, parámetros, etc. 
+- Usar flujos de trabajo (workflows) en Pipedream para procesar, transformar o reenviar las peticiones recibidas.
+
+#### 🧩 Uso típico
+
+- Si estás probando WebHooks, puedes enviar las peticiones a un RequestBin para ver exactamente qué datos envía el servicio antes de integrarlos en tu aplicación real.
+- Recibir peticiones HTTP o de APIs para entender cómo se envían las peticiones, cómo se estructuran los JSON, qué métodos HTTP se usan, etc., sin necesidad de un servidor propio.
+- Para chef_bot, se implementó para recibir métodos POST.
+
+## 💻 Tech Stack
+- Desarrollado en Flutter utilizando Dart.
+- Se hizo uso de las librerías **Dio**, **flutter_dotenv** y **shared_preferences**.
+- Se utilizó **Material Design** y **Custom Widgets** para mensajes de chat, listas de recetas, botones personalizados.
+- Se aplicó internacionalización, indicadores visuales de estado y de errores.
+- Control de Versiones con Git y Github.
+
+## 📲 In-app
