@@ -1,8 +1,7 @@
 import 'package:chef_bot/core/app_colors.dart';
-import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
+import 'package:chef_bot/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:chef_bot/data/repository/appRepository.dart';
 
 class RecipeScreen extends StatefulWidget {
@@ -14,43 +13,58 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeScreenState extends State<RecipeScreen> {
-  final appRepository _repository = appRepository();
+  final AppRepository _repository = AppRepository();
+
+  //Generamos una bandera para revisar cuando la informacion se mande para evitar que el usuario vuelva a mandar antes de completar
   bool _isSending = false;
 
+  //######## Método para MANDAR la receta a Pipedream RequestBin ################
   Future<void> _sendRecipe() async {
+    //Actualizamos el valor de isSending a true mientras la funcion async esté en curso
     setState(() => _isSending = true);
 
     try {
       await _repository.sendData(widget.recipe);
       debugPrint('Receta enviada a Pipedream');
+
+      //SnackBar para mostrar si el envío fue exitoso o erroneo
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
+          //Si la respuesta no mandó excepciones, entonces el envío fue exitoso
           content: Text(
-            AppStrings.snackBarSuccessful,
+            AppLocalizations.of(context)!.snackBarSuccessful,
             style: TextStyle(fontSize: 20),
           ),
           backgroundColor: AppColors.sendColor,
         ),
       );
+
+      //En caso de errores en el envío, se muestra con un snackbar
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            AppStrings.snackBarError,
+            AppLocalizations.of(context)!.snackBarError,
             style: TextStyle(fontSize: 20),
           ),
           backgroundColor: AppColors.saveColor,
         ),
       );
+
+      //Si la respuesta fue exitosa o erronea, permitimos que pueda volver a enviarse
     } finally {
       setState(() => _isSending = false);
     }
   }
 
+  //############ UI ################
   @override
   Widget build(BuildContext context) {
+    //Scaffold
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
+
+      //AppBar
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
         leading: IconButton(
@@ -71,41 +85,37 @@ class _RecipeScreenState extends State<RecipeScreen> {
         ),
       ),
 
+      //Boton de agregar a favoritos (Floating Action Button)
       floatingActionButton: FloatingActionButton(
         onPressed: _isSending ? null : _sendRecipe,
-        backgroundColor: _isSending
-            ? Colors.grey.shade300
-            : Colors.amber, // sin color fuerte
+        backgroundColor: _isSending ? AppColors.grey : AppColors.ambar,
         child: _isSending
             ? const SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black54),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.black),
                 ),
               )
-            : const Icon(Icons.star, color: Colors.white),
+            : const Icon(Icons.star, color: AppColors.white),
       ),
 
       body: ListView(
-        // ⭐ CAMBIO CLAVE: Usamos NeverScrollableScrollPhysics para deshabilitar el scroll.,
-        padding: EdgeInsets
-            .zero, // Importante: Elimina el padding por defecto del ListView.
+        padding: EdgeInsets.zero, //Elimina el padding por defecto del ListView.
         children: [
-          // 🖼️ IMAGEN DE ANCHO COMPLETO
+          //Imagen de la receta
           widget.recipe.thumbnailUrl != null
               ? Image.network(
                   widget.recipe.thumbnailUrl!,
-                  // El ancho se expande automáticamente dentro del ListView,
-                  // pero lo aseguramos con width: double.infinity
                   width: double.infinity,
-                  fit: BoxFit.cover, // Asegura que cubra el área
+                  fit: BoxFit.cover,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return SizedBox(
                       height: 300, // Altura del placeholder
                       child: Center(
+                        //CPI en lo que carga la imagen
                         child: CircularProgressIndicator(
                           color: AppColors.sendColor,
                           value: loadingProgress.expectedTotalBytes != null
@@ -120,12 +130,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 300,
-                      color: Colors.grey[200],
+                      color: AppColors.grey,
                       child: const Center(
                         child: Icon(
                           Icons.broken_image,
                           size: 50,
-                          color: Colors.grey,
+                          color: AppColors.grey,
                         ),
                       ),
                     );
@@ -133,55 +143,56 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 )
               : Container(
                   height: 300,
-                  color: Colors.grey[200],
-                  child: const Center(child: Text('Imagen no disponible')),
+                  color: AppColors.grey,
+                  child: Center(
+                    child: Text(AppLocalizations.of(context)!.noImage),
+                  ),
                 ),
 
           // Agregamos un espaciador entre la imagen y el texto
           const SizedBox(height: 10),
 
-          // 📝 CONTENIDO DE TEXTO (con Padding para los márgenes laterales)
+          //Elementos de texto de la Receta
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
               // Alineamos el texto a la izquierda para mejor lectura
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🟣 Nombre de la receta
+                //Nombre de la receta
                 Text(
-                  widget.recipe.name ?? 'Nombre no disponible',
+                  widget.recipe.name ?? AppLocalizations.of(context)!.noName,
                   style: const TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: AppColors.black,
                   ),
                 ),
 
                 const SizedBox(height: 8),
 
-                // 🔵 Pais
+                //Pais de la receta
                 Text(
                   widget.recipe.area != null
                       ? widget.recipe.area!
-                      : 'Area no disponible',
+                      : AppLocalizations.of(context)!.noArea,
                   style: const TextStyle(
                     fontSize: 20,
-                    color: Colors.orange,
+                    color: AppColors.orange,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
 
                 const SizedBox(height: 8),
 
+                //Receta
                 Text(
                   widget.recipe.instructions != null
                       ? widget.recipe.instructions!
-                      : 'Receta no disponible',
-                  style: const TextStyle(fontSize: 20, color: Colors.black),
+                      : AppLocalizations.of(context)!.noReceipe,
+                  style: const TextStyle(fontSize: 20, color: AppColors.black),
                 ),
-
-                // Puedes agregar más widgets aquí y se desplazarán
-                const SizedBox(height: 500), // Ejemplo para forzar el scroll
+                const SizedBox(height: 500),
               ],
             ),
           ),

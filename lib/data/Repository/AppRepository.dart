@@ -1,18 +1,22 @@
+import 'dart:convert';
 import 'package:chef_bot/core/app_constants.dart';
+import 'package:chef_bot/data/models/messages/message_struct.dart';
 import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:chef_bot/data/models/recipes/recipe_listDTO.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class appRepository {
+class AppRepository {
   final Dio _dio;
 
   final String requestBinUrl =
       dotenv.maybeGet('requestBinUrl') ??
       const String.fromEnvironment('RQB_URL', defaultValue: '');
 
-  appRepository({Dio? dio})
+  AppRepository({Dio? dio})
     : _dio =
           dio ??
           Dio(
@@ -91,5 +95,76 @@ class appRepository {
       default:
         debugPrint('⚠️ Error general de Dio: ${e.message}');
     }
+  }
+}
+
+class ChatRepository {
+  final GenerativeModel model;
+
+  ChatRepository({required String apiKey})
+    : model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+
+  Future<void> saveMessages(List<ChatMessage> _messages) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Convertir lista de mensajes a JSON
+    final mensajesJson = _messages.map((msg) {
+      return {
+        'text': msg.text,
+        'sender': msg.sender == MessageSender.user ? 'user' : 'bot',
+      };
+    }).toList();
+
+    await prefs.setString('chat_history', jsonEncode(mensajesJson));
+    debugPrint('💾 Chat guardado correctamente');
+  }
+
+  //Cargar Mensajes
+  Future<List<ChatMessage>> loadMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('chat_history');
+    if (data == null) return [];
+
+    final List<dynamic> mensajesJson = jsonDecode(data);
+    return mensajesJson
+        .map(
+          (item) => ChatMessage(
+            text: item['text'],
+            sender: item['sender'] == 'user'
+                ? MessageSender.user
+                : MessageSender.bot,
+          ),
+        )
+        .toList();
+  }
+
+  //Borrar Historial
+  Future<void> deleteHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('chat_history');
+  }
+
+  List<Content> construirContenido(List<ChatMessage> mensajes) {
+    List<Content> content = [];
+    content.add(
+      Content.text(
+        'Sistema: Eres ChefBot, da respuestas de longitud mediana o cortas sobre recetas...',
+      ),
+    );
+
+    for (var msg in mensajes) {
+      content.add(
+        Content.text(
+          '${msg.sender == MessageSender.user ? "Usuario" : "Bot"}: ${msg.text}',
+        ),
+      );
+    }
+    return content;
+  }
+
+  Future<String?> obtenerRespuesta(List<ChatMessage> mensajes) async {
+    final content = construirContenido(mensajes);
+    final response = await model.generateContent(content);
+    return response.text;
   }
 }

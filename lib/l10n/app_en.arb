@@ -94,5 +94,21 @@
   "snackBarError": "Error sending recipe",
   "@snackBarError": {
     "description": "SnackBar message when sending recipe fails"
+  },
+  "noImage": "Image not available",
+  "@noImage": {
+    "description": "When the recipe image doesnt load"
+  },
+  "noName": "Name not available",
+  "@noImage": {
+    "description": "When the recipe name doesnt load"
+  },
+  "noArea": "Country not available",
+  "@noImage": {
+    "description": "When the recipe area doesnt load"
+  },
+  "noReceipe": "Receipe not available",
+  "@noImage": {
+    "description": "When the recipe doesnt load"
   }
 }

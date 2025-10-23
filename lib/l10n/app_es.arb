@@ -94,5 +94,21 @@
   "snackBarError": "Error al enviar la receta",
   "@snackBarError": {
     "description": "Mensaje de SnackBar al fallar el envío de receta"
+  },
+  "noImage": "Imagen no disponible",
+  "@noImage": {
+    "description": "Cuando la imagen de la receta no carga"
+  },
+  "noName": "Nombre no disponible",
+  "@noImage": {
+    "description": "Cuando el nombre de la receta no carga"
+  },
+  "noArea": "País no disponible",
+  "@noImage": {
+    "description": "Cuando el pais de la receta no carga"
+  },
+  "noReceipe": "Receta no disponible",
+  "@noImage": {
+    "description": "Cuando al receta no carga"
   }
 }

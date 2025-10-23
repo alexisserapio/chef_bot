@@ -1,18 +1,11 @@
 import 'package:chef_bot/core/app_colors.dart';
-import 'package:chef_bot/core/app_strings.dart';
+import 'package:chef_bot/core/app_constants.dart';
 import 'package:chef_bot/core/widget_message.dart';
 import 'package:chef_bot/data/models/messages/message_struct.dart';
-
+import 'package:chef_bot/data/repository/appRepository.dart';
+import 'package:chef_bot/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-
-import 'package:google_generative_ai/google_generative_ai.dart';
-
-final String apiKey =
-    dotenv.maybeGet('apiKey') ??
-    const String.fromEnvironment('API_KEY', defaultValue: '');
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -22,59 +15,42 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  // Aquí es donde puedes declarar variables de estado (ej: TextEditingController, lista de mensajes, etc.)
-  // Por ejemplo, para el campo de texto:
-  final TextEditingController _textController = TextEditingController();
-
-  late final GenerativeModel model;
+  late final TextEditingController _textController;
+  late final ChatRepository _chatRepository;
 
   //Lista de mensajes que se mostraran en la UI
   final List<ChatMessage> _messages = [];
 
-  // 🆕 Estado de carga para el indicador de respuesta del bot
+  //Estado de carga para el indicador de respuesta del bot
   bool _isGenerating = false;
 
   @override
   void initState() {
     super.initState();
 
-    model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+    //Inicializar el TextEditingController
+    _textController = TextEditingController();
+
+    //Se obtiene la apiKey desde tokens.env
+    final apiKey =
+        dotenv.maybeGet('apiKey') ??
+        const String.fromEnvironment('API_KEY', defaultValue: '');
+
+    _chatRepository = ChatRepository(apiKey: apiKey);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _cargarMensajes();
+      await loadMessagesUI();
     });
   }
 
   @override
   void dispose() {
-    // Es importante liberar los recursos cuando el widget se destruye
     _textController.dispose();
     super.dispose();
   }
 
-  List<Content> construirContenido(List<ChatMessage> mensajes) {
-    List<Content> content = [];
-
-    // Primero el rol de sistema
-    content.add(
-      Content.text(
-        'Sistema: Eres ChefBot, da respuestas de longitud mediana o cortas sobre recetas con sus ingredientes y pasos, ademas de cualquier cosa sobre cocina',
-      ),
-    );
-
-    for (var msg in mensajes) {
-      if (msg.sender == MessageSender.user) {
-        content.add(Content.text('Usuario: ${msg.text}'));
-      } else {
-        content.add(Content.text(msg.text));
-      }
-    }
-
-    return content;
-  }
-
-  // Método para manejar el envío de mensajes
-  void sendMessage() {
+  //######## Método para manejar en UI el ENVIO de mensajes ################
+  void sendMessageUI() {
     final inputText = _textController.text;
 
     if (inputText.isNotEmpty && !_isGenerating) {
@@ -82,58 +58,57 @@ class _ChatScreenState extends State<ChatScreen> {
       debugPrint('Mensaje enviado: $inputText');
       setState(() {
         _messages.add(ChatMessage(text: inputText, sender: MessageSender.user));
-        _isGenerating = true; // Empieza la carga
+        _isGenerating = true;
       });
+
       // Limpiar el campo de texto y reconstruir el widget (si fuera necesario)
       _textController.clear();
-      // Si quieres que el UI se actualice después de enviar:
-      _guardarMensajes();
-      // setState(() { /* actualizar variables de estado aquí */ })
-      // Empieza la carga
-      obtenerRespuesta(inputText);
+
+      //Se guardan los mensajes
+      _chatRepository.saveMessages(_messages);
+
+      //Se manda a recibir la resuesta
+      obtenerRespuestaUI(inputText);
     }
   }
 
-  Future<void> _guardarMensajes() async {
-    final prefs = await SharedPreferences.getInstance();
+  //######## Método para manejar en UI el RECIBIR mensajes ################
+  Future<void> obtenerRespuestaUI(String prompt) async {
+    setState(() {
+      _isGenerating = true;
+    });
 
-    // Convertir lista de mensajes a JSON
-    final mensajesJson = _messages.map((msg) {
-      return {
-        'text': msg.text,
-        'sender': msg.sender == MessageSender.user ? 'user' : 'bot',
-      };
-    }).toList();
+    final content = _chatRepository.construirContenido(_messages);
 
-    await prefs.setString('chat_history', jsonEncode(mensajesJson));
-    debugPrint('💾 Chat guardado correctamente');
-  }
-
-  Future<void> _cargarMensajes() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString('chat_history');
-
-    if (data != null) {
-      final List<dynamic> mensajesJson = jsonDecode(data);
-
+    try {
+      final response = await _chatRepository.model.generateContent(content);
       setState(() {
-        _messages.clear();
-        _messages.addAll(
-          mensajesJson.map(
-            (item) => ChatMessage(
-              text: item['text'],
-              sender: item['sender'] == 'user'
-                  ? MessageSender.user
-                  : MessageSender.bot,
-            ),
-          ),
+        _messages.add(
+          ChatMessage(text: response.text!, sender: MessageSender.bot),
         );
+        _isGenerating = false;
       });
 
-      debugPrint('💬 Chat restaurado desde almacenamiento local');
-    } else {
-      // Si no hay historial previo, agregamos el mensaje de bienvenida
+      _chatRepository.saveMessages(_messages);
+    } catch (e) {
+      debugPrint('Ocurrió un error: $e');
       setState(() {
+        _isGenerating = false;
+      });
+    }
+  }
+
+  //######## Método para CARGAR en UI los mensajes si hay historial ################
+  Future<void> loadMessagesUI() async {
+    final mensajes = await _chatRepository.loadMessages();
+
+    setState(() {
+      _messages.clear();
+      if (mensajes.isNotEmpty) {
+        _messages.addAll(mensajes);
+        debugPrint('Se ha restaurado el chat desde almacenamiento local');
+      } else {
+        // Mensaje de bienvenida si no hay historial
         _messages.add(
           ChatMessage(
             text:
@@ -141,16 +116,18 @@ class _ChatScreenState extends State<ChatScreen> {
             sender: MessageSender.bot,
           ),
         );
-      });
-    }
+      }
+    });
   }
 
-  Future<void> _borrarHistorial() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('chat_history');
-    setState(() => _messages.clear());
-    debugPrint('🗑️ Historial eliminado');
+  //######## Método para manejar en UI el borrado de mensajes ################
+  Future<void> deleteHistoryUI() async {
+    _chatRepository.deleteHistory();
 
+    setState(() => _messages.clear());
+    debugPrint('Historial eliminado');
+
+    //Se vuelve a mandar el mensaje de bienvenida para evitar que el chat se encuentre vacío y que la AI genere procesamiento adicional
     setState(() {
       _messages.add(
         ChatMessage(
@@ -162,38 +139,14 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  Future<void> obtenerRespuesta(String prompt) async {
-    setState(() {
-      _isGenerating = true;
-    });
-
-    final content = construirContenido(_messages);
-
-    try {
-      final response = await model.generateContent(content);
-      setState(() {
-        _messages.add(
-          ChatMessage(text: response.text!, sender: MessageSender.bot),
-        );
-        _isGenerating = false;
-      });
-
-      _guardarMensajes();
-    } catch (e) {
-      debugPrint('Ocurrió un error: $e');
-      setState(() {
-        _isGenerating = false;
-      });
-    }
-  }
-
-  // Ejemplo de uso:
-  // obtenerRespuesta('Escribe un poema corto sobre Flutter.');
-
+  //############ UI ################
   @override
   Widget build(BuildContext context) {
+    //Scaffold
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
+
+      //AppBar
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
         leading: IconButton(
@@ -214,15 +167,17 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: _borrarHistorial,
-            icon: const Icon(Icons.delete_forever, color: Colors.redAccent),
+            onPressed: deleteHistoryUI,
+            icon: const Icon(Icons.delete_forever, color: AppColors.red),
           ),
         ],
       ),
+
+      //Body
       body: SafeArea(
         child: Column(
+          //ListView
           children: [
-            // Aquí más adelante irá la lista de mensajes
             Expanded(
               child: ListView.builder(
                 reverse: true,
@@ -238,15 +193,14 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
 
+            //UI para manejar los tiempos de respuesta de la AI
             if (_isGenerating)
               Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Column(
-                  // ⬅️ Nuevo: Usamos Column para apilar el indicador y el texto
                   mainAxisSize: MainAxisSize
                       .min, // Para que el Column no ocupe todo el espacio vertical disponible
-                  crossAxisAlignment: CrossAxisAlignment
-                      .start, // Para alinear el contenido a la izquierda (o como prefieras)
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -255,12 +209,14 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: CircleAvatar(
                             radius: 22,
                             backgroundImage: AssetImage(
-                              AppStrings.pathToBotImg,
+                              //Se pasa la ruta al archivo imagen para el bot
+                              AppConstants.pathToBotImg,
                             ),
                             backgroundColor: AppColors.imgBackground,
                           ),
                         ),
 
+                        //Mensaje de "Escribiendo" cuando se esté procesando la respuesta
                         Container(
                           margin: const EdgeInsets.only(left: 10),
                           padding: const EdgeInsets.all(12.0),
@@ -277,7 +233,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                           ),
                           child: Text(
-                            AppStrings.botThinking,
+                            AppLocalizations.of(context)!.botThinking,
                             style: TextStyle(color: Colors.grey, fontSize: 18),
                           ),
                         ),
@@ -286,6 +242,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     SizedBox(height: 26),
 
+                    //Se añade tambien un LinearProgressIndicator para "visualizar" la carga
                     LinearProgressIndicator(
                       color: AppColors.userMessages,
                       backgroundColor: AppColors.sendColor,
@@ -294,7 +251,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
 
-            // Campo de texto inferior
+            //EditText para ingresar el texto en el chat
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
@@ -305,14 +262,13 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Row(
                 children: [
-                  // Campo de texto
                   Expanded(
                     child: TextField(
                       controller: _textController, // Asignamos el controlador
                       onSubmitted: (_) =>
-                          sendMessage(), // Enviamos al presionar Enter
+                          sendMessageUI(), // Enviamos al presionar el botón
                       decoration: InputDecoration(
-                        hintText: AppStrings.textFieldHint,
+                        hintText: AppLocalizations.of(context)!.textFieldHint,
                         hintStyle: TextStyle(color: Colors.grey[600]),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -339,14 +295,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   const SizedBox(width: 8),
 
-                  // Botón redondeado
+                  // Botón redondeado de enviar
                   Container(
                     decoration: const BoxDecoration(
                       color: AppColors.sendColor,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      onPressed: sendMessage, // Llamamos al método de envío
+                      onPressed: sendMessageUI, // Llamamos al método de envío
                       icon: const Icon(Icons.send, color: Colors.white),
                     ),
                   ),

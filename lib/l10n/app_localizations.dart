@@ -238,6 +238,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error sending recipe'**
   String get snackBarError;
+
+  /// When the recipe doesnt load
+  ///
+  /// In en, this message translates to:
+  /// **'Image not available'**
+  String get noImage;
+
+  /// No description provided for @noName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name not available'**
+  String get noName;
+
+  /// No description provided for @noArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Country not available'**
+  String get noArea;
+
+  /// No description provided for @noReceipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipe not available'**
+  String get noReceipe;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

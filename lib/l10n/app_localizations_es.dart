@@ -79,4 +79,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get snackBarError => 'Error al enviar la receta';
+
+  @override
+  String get noImage => 'Imagen no disponible';
+
+  @override
+  String get noName => 'Nombre no disponible';
+
+  @override
+  String get noArea => 'País no disponible';
+
+  @override
+  String get noReceipe => 'Receta no disponible';
 }

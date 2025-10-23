@@ -1,4 +1,5 @@
-import 'package:chef_bot/core/app_strings.dart';
+import 'package:chef_bot/core/app_constants.dart';
+import 'package:chef_bot/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:chef_bot/core/app_colors.dart';
 import 'package:chef_bot/data/models/messages/message_struct.dart';
@@ -10,8 +11,8 @@ class MessageBubble extends StatelessWidget {
 
   String getProfileImageUrl(MessageSender sender) {
     return sender == MessageSender.user
-        ? AppStrings.pathToUserImg
-        : AppStrings.pathToBotImg;
+        ? AppConstants.pathToUserImg
+        : AppConstants.pathToBotImg;
   }
 
   @override
@@ -21,7 +22,9 @@ class MessageBubble extends StatelessWidget {
     final textColor = isUser ? Colors.black : Colors.black87;
 
     // Define el texto a mostrar arriba de la burbuja
-    final senderName = isUser ? AppStrings.userDisplay : AppStrings.botDisplay;
+    final senderName = isUser
+        ? AppLocalizations.of(context)!.userDisplay
+        : AppLocalizations.of(context)!.botDisplay;
 
     return Container(
       margin: const EdgeInsets.only(

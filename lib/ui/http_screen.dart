@@ -1,8 +1,8 @@
 import 'package:chef_bot/core/app_colors.dart';
-import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/data/repository/appRepository.dart';
 import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 import 'package:chef_bot/data/models/recipes/recipe_listDTO.dart';
+import 'package:chef_bot/l10n/app_localizations.dart';
 import 'package:chef_bot/ui/recipe_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,16 +14,18 @@ class HttpScreen extends StatefulWidget {
 }
 
 class _HttpScreenState extends State<HttpScreen> {
-  final appRepository _repository = appRepository();
+  final AppRepository _repository = AppRepository();
   late Future<RecipeList?> _recipes;
   final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    //Inicializamos la lista de recetas como nulo
     _recipes = Future.value(null);
   }
 
+  //######## Método para BUSCAR la receta ingresada por el usuario ################
   void _searchRecipe() {
     final inputText = _textController.text;
 
@@ -37,6 +39,7 @@ class _HttpScreenState extends State<HttpScreen> {
     }
   }
 
+  //############ UI ################
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +60,7 @@ class _HttpScreenState extends State<HttpScreen> {
         title: const Text(
           'HTTP Requests 🌐',
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.black,
             fontWeight: FontWeight.bold,
             fontSize: 24,
           ),
@@ -67,6 +70,7 @@ class _HttpScreenState extends State<HttpScreen> {
       //Body
       body: Column(
         children: [
+          //TextField
           Padding(
             padding: const EdgeInsets.only(top: 18.0, right: 10.0, left: 10.0),
             child: TextField(
@@ -75,60 +79,76 @@ class _HttpScreenState extends State<HttpScreen> {
               onSubmitted: (_) =>
                   _searchRecipe(), // Enviamos al presionar Enter
               decoration: InputDecoration(
-                hintText: AppStrings.searchFieldHint,
-                prefixIcon: Icon(Icons.search),
+                hintText: AppLocalizations.of(context)!.searchFieldHint,
+                prefixIcon: Icon(
+                  Icons.search,
+                ), //Se añade un icono para mejorar la experiencia
                 suffixIcon: const Opacity(
+                  //Este otro es para garantizar que el texto esté centrado
                   opacity: 0.0, // Lo hacemos invisible
-                  child: Icon(
-                    Icons.search,
-                  ), // Usamos el mismo icono para asegurar el tamaño
+                  child: Icon(Icons.search),
                 ),
-                hintStyle: TextStyle(color: Colors.grey[600]),
+                hintStyle: TextStyle(color: AppColors.grey),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.orange, width: 1),
+                  borderSide: BorderSide(color: AppColors.orange, width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.orange, width: 2.5),
+                  borderSide: BorderSide(color: AppColors.orange, width: 2.5),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: AppColors.white,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               ),
             ),
           ),
 
+          //Lista de Recetas
           FutureBuilder(
             future: _recipes,
             builder: (context, snapshot) {
+              //Se maneja la respuesta obtenida de la API
+
+              //En lo que recibimos la respuesta de la API
               if (snapshot.connectionState == ConnectionState.waiting) {
+                //Colocamos un CircularProgressIndicator
                 return Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: CircularProgressIndicator(color: AppColors.sendColor),
                 );
+
+                //Si la respuesta no es exitosa
               } else if (snapshot.hasError) {
+                debugPrint(
+                  'Ha ocurrido un error en el snapshot: ${snapshot.error}',
+                );
                 return Text("Error: ${snapshot.error}");
+
+                //Si la respuesta es exitosa
               } else if (snapshot.hasData) {
                 var recipeList = snapshot.data?.result;
+
+                //Si la respuesta es exitosa al conectarse a la API pero falla en encontrar una receta
                 if (recipeList == null || recipeList.isEmpty) {
+                  //Se muestra un mensaje de error y tips para volver a intentarlo
                   return Column(
                     children: [
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 15.0),
                         child: Text(
-                          AppStrings.noRecipesFoundOne,
+                          AppLocalizations.of(context)!.noRecipesFoundOne,
                           style: TextStyle(
-                            color: Colors.redAccent,
+                            color: AppColors.red,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 20.0),
                         child: Text(
-                          AppStrings.noRecipesFoundTwo,
+                          AppLocalizations.of(context)!.noRecipesFoundTwo,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.black,
@@ -140,7 +160,10 @@ class _HttpScreenState extends State<HttpScreen> {
                     ],
                   );
                 }
+
+                //Si la respuesta es completamente exitosa
                 return Expanded(
+                  //Generamos la ListView
                   child: ListView.builder(
                     itemCount: recipeList.length,
                     itemBuilder: (context, index) {
@@ -148,24 +171,26 @@ class _HttpScreenState extends State<HttpScreen> {
                     },
                   ),
                 );
+
+                //Instrucciones para realizar las peticiones HTTP
               } else {
                 return Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Text(
-                        AppStrings.instructionsTitle,
+                        AppLocalizations.of(context)!.instructionsTitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: AppColors.green,
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Text(
-                        AppStrings.firstInstructions,
+                        AppLocalizations.of(context)!.firstInstructions,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -173,7 +198,7 @@ class _HttpScreenState extends State<HttpScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
-                        AppStrings.firstSubText,
+                        AppLocalizations.of(context)!.firstSubText,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -184,7 +209,7 @@ class _HttpScreenState extends State<HttpScreen> {
                         right: 10.0,
                       ),
                       child: Text(
-                        AppStrings.secondInstructions,
+                        AppLocalizations.of(context)!.secondInstructions,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -196,7 +221,7 @@ class _HttpScreenState extends State<HttpScreen> {
                         right: 10.0,
                       ),
                       child: Text(
-                        AppStrings.secondSubText,
+                        AppLocalizations.of(context)!.secondSubText,
                         textAlign: TextAlign.center,
                       ),
                     ),
