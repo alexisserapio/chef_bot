@@ -122,3 +122,37 @@ Tiene como caracteristicas:
 - Control de Versiones con Git y Github.
 
 ## 📲 In-app
+#### Main Screen
+- Al ejecutar, observamos la siguiente interfaz:
+- Dentro de ella encontraremos dos botones que nos llevarán a las secciones "Chat with ChefBot" o "Perform HTTP Requests".
+<img src="https://github.com/alexisserapio/chef_bot_resources/blob/main/rsc/1.png" alt="Captura de Pantalla sobre la app en el móvil y su interfaz principal" width="175" height="450">
+
+---
+#### Chat Screen
+- Al dar click sobre el botón de chat, nos llevará a la siguiente interfaz, nos recibirá chef_bot con un saludo y podemos hablarle de cualquier cosa que queramos relacionada a la cocina.
+- No importa si cerramos la aplicación, navegamos hacía otra sección, etc. El chat permanecerá intacto.
+- Podemos dar click en el botón superior derecho para eliminar el historial.
+<img src="https://github.com/alexisserapio/chef_bot_resources/blob/main/rsc/2.png" alt="Captura de Pantalla sobre la app en el móvil y su interfaz principal" width="175" height="450">
+
+---
+#### HTTP Screen
+- Al dar click sobre el botón de Request, se nos mostrará una interfaz con un TextField editable donde podremos buscar alguna receta.
+- Para evaluar la consulta de información externa (GET), tenemos una petición a la API, la cual nos devolverá todas las coincidencias de nuestra receta.
+- Podemos dar click en cualquiera de los elementos.
+<img src="https://github.com/alexisserapio/chef_bot_resources/blob/main/rsc/3.png" alt="Captura de Pantalla sobre la app en el móvil y su interfaz principal" width="175" height="450">
+
+---
+
+#### Recipe Screen
+- Una vez seleccionada nuestra receta, podremos ver una descripción más detallada de ella como un thumbnail, su nombre, país de origen y receta.
+- La interfaz nos presenta un Floating Action Button para poder agregar a favoritos.
+- Al dar click, se realizará una petición (POST) a una URL host definida. Si la respuesta es correctamente un JSON, nos recibirá con un Snackbar de que la petición se ha completado.
+<img src="https://github.com/alexisserapio/chef_bot_resources/blob/main/rsc/4.png" alt="Captura de Pantalla sobre la app en el móvil y su interfaz principal" width="175" height="450">
+
+<img src="https://github.com/alexisserapio/chef_bot_resources/blob/main/rsc/5.png" alt="Captura de Pantalla sobre la app en el móvil y su interfaz principal" width="175" height="450">
+
+---
+### Recuerda que en cualquier momento puedes hacer uso de la consola de depuración para ver en todo momento Logs sobre lo que está pasando en la app
+- Por ejemplo al momento de enviar la petición POST y recibir confirmación veremos algo como esto:
+
+<img src="https://github.com/alexisserapio/chef_bot_resources/blob/main/rsc/6.png" alt="Captura de Pantalla sobre la app en el móvil y su interfaz principal" width="400" height="400">
