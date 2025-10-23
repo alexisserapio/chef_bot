@@ -9,6 +9,7 @@ import 'package:chef_bot/data/models/recipes/recipe_listDTO.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//Se crea un repositorio para manejo de APIs y HTTP Requests
 class AppRepository {
   final Dio _dio;
 
@@ -39,7 +40,7 @@ class AppRepository {
       final response = await _dio.get(name);
 
       if (response.statusCode == 200) {
-        debugPrint('✅ Respuesta 200 OK');
+        debugPrint('Respuesta 200 OK');
         final data = response.data;
         final recipes = RecipeList.fromJson(data);
         if (recipes.result == null) {
@@ -51,14 +52,14 @@ class AppRepository {
         return recipes;
       } else {
         throw Exception(
-          '❌ Fallo al cargar las recetas. Código: ${response.statusCode}',
+          'Hubo un error al cargar las recetas. Código: ${response.statusCode}',
         );
       }
     } on DioException catch (e) {
       _handleDioError(e);
       throw Exception('Error de red al conectar con la API.');
     } catch (e) {
-      debugPrint('⚠️ Error inesperado: $e');
+      debugPrint('Error inesperado: $e');
       throw Exception('Error desconocido al cargar las recetas.');
     }
   }
@@ -68,15 +69,15 @@ class AppRepository {
     final dioTemp = Dio();
 
     try {
-      final response_rqb = await dioTemp.post(
+      final responseRbq = await dioTemp.post(
         requestBinUrl,
         data: recipe.toJson(),
       );
 
-      debugPrint('✅ Datos enviados con éxito: ${response_rqb.statusCode}');
-      debugPrint('📤 Respuesta: ${response_rqb.data}');
+      debugPrint('Datos enviados con éxito: ${responseRbq.statusCode}');
+      debugPrint('########### Respuesta: ${responseRbq.data}');
     } catch (e) {
-      debugPrint('❌ Error al enviar los datos: $e');
+      debugPrint('Error al enviar los datos: $e');
       throw Exception('No se pudieron enviar los datos');
     }
   }
@@ -85,20 +86,20 @@ class AppRepository {
   void _handleDioError(DioException e) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
-        debugPrint('⏱ Tiempo de conexión agotado');
+        debugPrint('Tiempo de conexión agotado');
         break;
       case DioExceptionType.receiveTimeout:
-        debugPrint('📭 Tiempo de respuesta agotado');
+        debugPrint('Tiempo de respuesta agotado');
         break;
       case DioExceptionType.badResponse:
-        debugPrint('❌ Error del servidor: ${e.response?.statusCode}');
-        debugPrint('🧾 Cuerpo: ${e.response?.data}');
+        debugPrint('Error del servidor: ${e.response?.statusCode}');
+        debugPrint('Cuerpo: ${e.response?.data}');
         break;
       case DioExceptionType.connectionError:
-        debugPrint('🚫 Error de conexión (sin red)');
+        debugPrint('Error de conexión');
         break;
       default:
-        debugPrint('⚠️ Error general de Dio: ${e.message}');
+        debugPrint('Error general de Dio: ${e.message}');
     }
   }
 }
@@ -121,7 +122,7 @@ class ChatRepository {
     }).toList();
 
     await prefs.setString('chat_history', jsonEncode(mensajesJson));
-    debugPrint('💾 Chat guardado correctamente');
+    debugPrint('Chat guardado');
   }
 
   //Cargar Mensajes
