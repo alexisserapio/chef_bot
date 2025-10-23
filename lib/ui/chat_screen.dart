@@ -10,7 +10,9 @@ import 'dart:convert';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 
-final String apiKey = dotenv.get('apiKey', fallback: '');
+final String apiKey =
+    dotenv.maybeGet('apiKey') ??
+    const String.fromEnvironment('API_KEY', defaultValue: '');
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});

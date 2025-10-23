@@ -1,18 +1,23 @@
+import 'package:chef_bot/core/app_constants.dart';
 import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:chef_bot/core/app_constants.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:chef_bot/data/models/recipes/recipe_listDTO.dart';
 
-class AppRepository {
+class appRepository {
   final Dio _dio;
 
-  AppRepository({Dio? dio})
+  final String requestBinUrl =
+      dotenv.maybeGet('requestBinUrl') ??
+      const String.fromEnvironment('RQB_URL', defaultValue: '');
+
+  appRepository({Dio? dio})
     : _dio =
           dio ??
           Dio(
             BaseOptions(
-              baseUrl: AppConstants.BASE_URL,
+              baseUrl: AppConstants.apiMealUrl,
               connectTimeout: const Duration(seconds: 10),
               receiveTimeout: const Duration(seconds: 10),
               headers: {'Content-Type': 'application/json'},
@@ -33,6 +38,12 @@ class AppRepository {
         debugPrint('✅ Respuesta 200 OK');
         final data = response.data;
         final recipes = RecipeList.fromJson(data);
+        if (recipes.result == null) {
+          debugPrint('🔍 No se encontraron resultados (meals: null)');
+          // Si no hay resultados, puedes devolver null para que el UI
+          // lo interprete como "No hay resultados".
+          return RecipeList(result: []);
+        }
         return recipes;
       } else {
         throw Exception(
@@ -51,10 +62,7 @@ class AppRepository {
   /// Envía datos JSON a un endpoint de prueba (como Pipedream)
   Future<void> sendData(Recipe recipe) async {
     try {
-      final response = await _dio.post(
-        AppConstants.BASE_MY_URL,
-        data: recipe.toJson(),
-      );
+      final response = await _dio.post(requestBinUrl, data: recipe.toJson());
 
       debugPrint('✅ Datos enviados con éxito: ${response.statusCode}');
       debugPrint('📤 Respuesta: ${response.data}');

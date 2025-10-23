@@ -14,7 +14,7 @@ class HttpScreen extends StatefulWidget {
 }
 
 class _HttpScreenState extends State<HttpScreen> {
-  final AppRepository _repository = AppRepository();
+  final appRepository _repository = appRepository();
   late Future<RecipeList?> _recipes;
   final TextEditingController _textController = TextEditingController();
 
@@ -24,8 +24,9 @@ class _HttpScreenState extends State<HttpScreen> {
     _recipes = Future.value(null);
   }
 
-  void searchRecipe() {
+  void _searchRecipe() {
     final inputText = _textController.text;
+
     if (inputText.isNotEmpty) {
       // Lógica para procesar el mensaje, actualizar el estado, etc.
       debugPrint('Receta buscada: $inputText');
@@ -71,7 +72,8 @@ class _HttpScreenState extends State<HttpScreen> {
             child: TextField(
               textAlign: TextAlign.center,
               controller: _textController, // Asignamos el controlador
-              onSubmitted: (_) => searchRecipe(), // Enviamos al presionar Enter
+              onSubmitted: (_) =>
+                  _searchRecipe(), // Enviamos al presionar Enter
               decoration: InputDecoration(
                 hintText: AppStrings.searchFieldHint,
                 prefixIcon: Icon(Icons.search),
@@ -109,15 +111,40 @@ class _HttpScreenState extends State<HttpScreen> {
                 return Text("Error: ${snapshot.error}");
               } else if (snapshot.hasData) {
                 var recipeList = snapshot.data?.result;
+                if (recipeList == null || recipeList.isEmpty) {
+                  return Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 15.0),
+                        child: Text(
+                          AppStrings.noRecipesFoundOne,
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          AppStrings.noRecipesFoundTwo,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
                 return Expanded(
                   child: ListView.builder(
-                    itemCount: recipeList?.length ?? 0,
+                    itemCount: recipeList.length,
                     itemBuilder: (context, index) {
-                      if (recipeList != null) {
-                        return itemRecipe(recipeList[index]);
-                      } else {
-                        return Text('Error!');
-                      }
+                      return itemRecipe(recipeList[index]);
                     },
                   ),
                 );
@@ -151,7 +178,11 @@ class _HttpScreenState extends State<HttpScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
+                      padding: const EdgeInsets.only(
+                        top: 10.0,
+                        left: 10.0,
+                        right: 10.0,
+                      ),
                       child: Text(
                         AppStrings.secondInstructions,
                         textAlign: TextAlign.center,
@@ -159,7 +190,11 @@ class _HttpScreenState extends State<HttpScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 3.0),
+                      padding: const EdgeInsets.only(
+                        top: 3.0,
+                        left: 10.0,
+                        right: 10.0,
+                      ),
                       child: Text(
                         AppStrings.secondSubText,
                         textAlign: TextAlign.center,

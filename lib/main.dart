@@ -42,7 +42,7 @@ class RecipeBook extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 52,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppColors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -53,7 +53,7 @@ class RecipeBook extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppColors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -61,7 +61,7 @@ class RecipeBook extends StatelessWidget {
               //Select Text
               const Text(
                 AppStrings.selectOption,
-                style: TextStyle(fontSize: 18, color: Colors.black54),
+                style: TextStyle(fontSize: 18, color: AppColors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
@@ -107,7 +107,7 @@ class RecipeBook extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: AppColors.orange,
                     padding: const EdgeInsets.symmetric(
                       // El padding ya no necesita ser tan grande horizontalmente.
                       vertical: 18,
@@ -118,7 +118,7 @@ class RecipeBook extends StatelessWidget {
                   ),
                   child: const Text(
                     AppStrings.httpButton,
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(fontSize: 18, color: AppColors.white),
                   ),
                 ),
               ),
@@ -129,7 +129,7 @@ class RecipeBook extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
-                  color: Colors.black,
+                  color: AppColors.black,
                 ),
                 textAlign: TextAlign.center,
               ),

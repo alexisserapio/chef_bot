@@ -20,6 +20,12 @@ class AppStrings {
       '1. Escribe una receta a buscar en TheMealDB API';
   static const firstSubText = '(Consulta de Informacion Externa)';
   static const secondInstructions =
-      '2. Posteriormente agrega tu receta a favoritos';
-  static const secondSubText = '(Envio simulado de datos)';
+      '2. Posteriormente agrega tu receta a favoritos dando clic en el icon de la estrella';
+  static const secondSubText =
+      '(Envio simulado de datos, puedes consultar la deubg console y la url de Pipedream)';
+  static const noRecipesFoundOne = 'No se encontraron recetas';
+  static const noRecipesFoundTwo =
+      'Intenta escribir en idioma inglés o busca otra receta';
+  static const snackBarSuccessful = "Receta enviada con éxito";
+  static const snackBarError = "Error al enviar la receta";
 }

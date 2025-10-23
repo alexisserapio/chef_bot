@@ -1,4 +1,5 @@
 import 'package:chef_bot/core/app_colors.dart';
+import 'package:chef_bot/core/app_strings.dart';
 import 'package:chef_bot/data/models/recipes/recipeDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,7 +14,38 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeScreenState extends State<RecipeScreen> {
-  final AppRepository _repository = AppRepository();
+  final appRepository _repository = appRepository();
+  bool _isSending = false;
+
+  Future<void> _sendRecipe() async {
+    setState(() => _isSending = true);
+
+    try {
+      await _repository.sendData(widget.recipe);
+      debugPrint('Receta enviada a Pipedream');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            AppStrings.snackBarSuccessful,
+            style: TextStyle(fontSize: 20),
+          ),
+          backgroundColor: AppColors.sendColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            AppStrings.snackBarError,
+            style: TextStyle(fontSize: 20),
+          ),
+          backgroundColor: AppColors.saveColor,
+        ),
+      );
+    } finally {
+      setState(() => _isSending = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,21 +72,20 @@ class _RecipeScreenState extends State<RecipeScreen> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          try {
-            await _repository.sendData(widget.recipe);
-            debugPrint('Receta enviada a Pipedream');
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Receta enviada con éxito 🚀')),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Error al enviar la receta ❌')),
-            );
-          }
-        },
-        backgroundColor: Colors.amber,
-        child: const Icon(Icons.star, color: Colors.white),
+        onPressed: _isSending ? null : _sendRecipe,
+        backgroundColor: _isSending
+            ? Colors.grey.shade300
+            : Colors.amber, // sin color fuerte
+        child: _isSending
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black54),
+                ),
+              )
+            : const Icon(Icons.star, color: Colors.white),
       ),
 
       body: ListView(
