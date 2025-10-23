@@ -1,0 +1,98 @@
+{
+  "greeting": "¡Hola! 👨‍🍳",
+  "@greeting": {
+    "description": "Mensaje de saludo inicial"
+  },
+  "welcome": "Bienvenido a ChefBot",
+  "@welcome": {
+    "description": "Mensaje de bienvenida"
+  },
+  "selectOption": "Selecciona una de las dos opciones:",
+  "@selectOption": {
+    "description": "Indicaciones para seleccionar una opción"
+  },
+  "chatButton": "Chatea con ChefBot",
+  "@chatButton": {
+    "description": "Texto del botón para chatear con ChefBot"
+  },
+  "httpButton": "Realiza operaciones HTTP",
+  "@httpButton": {
+    "description": "Texto del botón para operaciones HTTP"
+  },
+  "textFieldHint": "Escribe tu mensaje...",
+  "@textFieldHint": {
+    "description": "Hint del campo de texto"
+  },
+  "botThinking": "Escribiendo...",
+  "@botThinking": {
+    "description": "Mensaje que indica que el bot está escribiendo"
+  },
+  "userDisplay": "Tú",
+  "@userDisplay": {
+    "description": "Nombre mostrado para el usuario"
+  },
+  "botDisplay": "ChefBot",
+  "@botDisplay": {
+    "description": "Nombre mostrado para el bot"
+  },
+  "pathToBotImg": "lib/assets/chefbot.png",
+  "@pathToBotImg": {
+    "description": "Ruta a la imagen del bot"
+  },
+  "pathToUserImg": "lib/assets/user.png",
+  "@pathToUserImg": {
+    "description": "Ruta a la imagen del usuario"
+  },
+  "httpTitle": "¡Hola!",
+  "@httpTitle": {
+    "description": "Título de la sección HTTP"
+  },
+  "httpSubtitle": "Aquí tienes una receta aleatoria:",
+  "@httpSubtitle": {
+    "description": "Subtítulo de la sección HTTP"
+  },
+  "httpError": "Ocurrió un error al recuperar la receta, intenta nuevamente",
+  "@httpError": {
+    "description": "Mensaje de error al recuperar receta"
+  },
+  "searchFieldHint": "Buscar Recetas",
+  "@searchFieldHint": {
+    "description": "Hint del campo de búsqueda"
+  },
+  "instructionsTitle": "¿Cómo realizar las peticiones?",
+  "@instructionsTitle": {
+    "description": "Título de las instrucciones"
+  },
+  "firstInstructions": "1. Escribe una receta a buscar en TheMealDB API",
+  "@firstInstructions": {
+    "description": "Primera instrucción paso 1"
+  },
+  "firstSubText": "(Consulta de Informacion Externa)",
+  "@firstSubText": {
+    "description": "Subtexto de la primera instrucción"
+  },
+  "secondInstructions": "2. Posteriormente agrega tu receta a favoritos dando clic en el icon de la estrella",
+  "@secondInstructions": {
+    "description": "Segunda instrucción paso 2"
+  },
+  "secondSubText": "(Envio simulado de datos, puedes consultar la deubg console y la url de Pipedream)",
+  "@secondSubText": {
+    "description": "Subtexto de la segunda instrucción"
+  },
+  "noRecipesFoundOne": "No se encontraron recetas",
+  "@noRecipesFoundOne": {
+    "description": "Mensaje cuando no hay recetas encontradas"
+  },
+  "noRecipesFoundTwo": "Intenta escribir en idioma inglés o busca otra receta",
+  "@noRecipesFoundTwo": {
+    "description": "Sugerencia adicional cuando no hay recetas"
+  },
+  "snackBarSuccessful": "Receta enviada con éxito",
+  "@snackBarSuccessful": {
+    "description": "Mensaje de SnackBar al enviar receta correctamente"
+  },
+  "snackBarError": "Error al enviar la receta",
+  "@snackBarError": {
+    "description": "Mensaje de SnackBar al fallar el envío de receta"
+  }
+}

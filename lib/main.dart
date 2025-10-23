@@ -1,9 +1,10 @@
 import 'package:chef_bot/core/app_colors.dart';
-import 'package:chef_bot/core/app_strings.dart';
+import 'package:chef_bot/l10n/app_localizations.dart';
 import 'package:chef_bot/ui/chat_screen.dart';
 import 'package:chef_bot/ui/http_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,14 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Flutter i18n Demo',
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,
       home: const RecipeBook(),
     );
@@ -28,8 +37,11 @@ class RecipeBook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Scaffold
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
+
+      //Body
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -37,8 +49,8 @@ class RecipeBook extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //Title
-              const Text(
-                AppStrings.greeting,
+              Text(
+                AppLocalizations.of(context)!.greeting,
                 style: TextStyle(
                   fontSize: 52,
                   fontWeight: FontWeight.bold,
@@ -47,9 +59,10 @@ class RecipeBook extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              const Text(
-                //Subtitle (welcome)
-                AppStrings.welcome,
+
+              //Subtitle (welcome)
+              Text(
+                AppLocalizations.of(context)!.welcome,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -58,16 +71,18 @@ class RecipeBook extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
+
               //Select Text
-              const Text(
-                AppStrings.selectOption,
+              Text(
+                AppLocalizations.of(context)!.selectOption,
                 style: TextStyle(fontSize: 18, color: AppColors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
+
               //Green Button
               SizedBox(
-                width: double.infinity, // <--- ESTO FUERZA EL ANCHO MÁXIMO
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -79,24 +94,22 @@ class RecipeBook extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.sendColor,
-                    padding: const EdgeInsets.symmetric(
-                      // El padding ya no necesita ser tan grande horizontalmente.
-                      vertical: 18,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    AppStrings.chatButton,
+                  child: Text(
+                    AppLocalizations.of(context)!.chatButton,
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 40),
+
               //Orange Button
               SizedBox(
-                width: double.infinity, // <--- ESTO FUERZA EL ANCHO MÁXIMO
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -108,24 +121,22 @@ class RecipeBook extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.orange,
-                    padding: const EdgeInsets.symmetric(
-                      // El padding ya no necesita ser tan grande horizontalmente.
-                      vertical: 18,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    AppStrings.httpButton,
+                  child: Text(
+                    AppLocalizations.of(context)!.httpButton,
                     style: TextStyle(fontSize: 18, color: AppColors.white),
                   ),
                 ),
               ),
+
               //Credits!
               const SizedBox(height: 30),
               const Text(
-                'Made with <3 by Alexis Serapio',
+                'Made with <3 by Alexis Serapio', //Hardcodeado jaja pero es un greeting :D
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,

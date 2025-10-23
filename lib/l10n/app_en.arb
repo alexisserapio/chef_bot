@@ -1,0 +1,98 @@
+{
+  "greeting": "Hello! 👨‍🍳",
+  "@greeting": {
+    "description": "Initial greeting message"
+  },
+  "welcome": "Welcome to ChefBot",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+  "selectOption": "Select one of the two options:",
+  "@selectOption": {
+    "description": "Prompt to select an option"
+  },
+  "chatButton": "Chat with ChefBot",
+  "@chatButton": {
+    "description": "Text for the chat button"
+  },
+  "httpButton": "Perform HTTP operations",
+  "@httpButton": {
+    "description": "Text for the HTTP operations button"
+  },
+  "textFieldHint": "Type your message...",
+  "@textFieldHint": {
+    "description": "Hint for the text field"
+  },
+  "botThinking": "Typing...",
+  "@botThinking": {
+    "description": "Message indicating the bot is typing"
+  },
+  "userDisplay": "You",
+  "@userDisplay": {
+    "description": "Display name for the user"
+  },
+  "botDisplay": "ChefBot",
+  "@botDisplay": {
+    "description": "Display name for the bot"
+  },
+  "pathToBotImg": "lib/assets/chefbot.png",
+  "@pathToBotImg": {
+    "description": "Path to the bot image"
+  },
+  "pathToUserImg": "lib/assets/user.png",
+  "@pathToUserImg": {
+    "description": "Path to the user image"
+  },
+  "httpTitle": "Hello!",
+  "@httpTitle": {
+    "description": "Title of the HTTP section"
+  },
+  "httpSubtitle": "Here is a random recipe:",
+  "@httpSubtitle": {
+    "description": "Subtitle of the HTTP section"
+  },
+  "httpError": "An error occurred while retrieving the recipe, please try again",
+  "@httpError": {
+    "description": "Error message when fetching recipe fails"
+  },
+  "searchFieldHint": "Search Recipes",
+  "@searchFieldHint": {
+    "description": "Hint for the search field"
+  },
+  "instructionsTitle": "How to make the requests?",
+  "@instructionsTitle": {
+    "description": "Instructions title"
+  },
+  "firstInstructions": "1. Enter a recipe to search in TheMealDB API",
+  "@firstInstructions": {
+    "description": "First instruction step 1"
+  },
+  "firstSubText": "(External Information Query)",
+  "@firstSubText": {
+    "description": "Subtext of the first instruction"
+  },
+  "secondInstructions": "2. Then add your recipe to favorites by clicking the star icon",
+  "@secondInstructions": {
+    "description": "Second instruction step 2"
+  },
+  "secondSubText": "(Simulated data submission, you can check the debug console and Pipedream URL)",
+  "@secondSubText": {
+    "description": "Subtext of the second instruction"
+  },
+  "noRecipesFoundOne": "No recipes found",
+  "@noRecipesFoundOne": {
+    "description": "Message when no recipes are found"
+  },
+  "noRecipesFoundTwo": "Try writing in English or search for another recipe",
+  "@noRecipesFoundTwo": {
+    "description": "Additional suggestion when no recipes are found"
+  },
+  "snackBarSuccessful": "Recipe sent successfully",
+  "@snackBarSuccessful": {
+    "description": "SnackBar message when recipe is sent successfully"
+  },
+  "snackBarError": "Error sending recipe",
+  "@snackBarError": {
+    "description": "SnackBar message when sending recipe fails"
+  }
+}
